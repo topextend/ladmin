@@ -1,0 +1,40 @@
+<form onsubmit="return false" data-auto="true" action="{:request()->url()}" method="post" class='layui-form layui-card' autocomplete="off">
+    <div class="layui-card-body padding-left-40">
+        <div class="layui-form-item">
+            <span class="color-green font-w7 label-required-prev">所属店铺</span>
+            <span class="color-desc margin-left-5">Shop Type</span>
+            <label class="layui-input-block">
+                <select name='shop_id' class='layui-select' lay-search>
+                    <option value="0">请选择店铺</option>
+                    <!-- {foreach $shops as $shop} -->
+                        <!-- {eq name='shop.id' value='$vo.shop_id|default=0'} -->
+                            <option selected value='{$shop.id}'>[{if $shop.shop_type eq 1}拼多多{elseif $shop.shop_type eq 2}淘  宝{elseif $shop.shop_type eq 3}京东{/if}]---{$shop.shop_name}</option>
+                        <!-- {else} -->
+                            <option value='{$shop.id}'>[{if $shop.shop_type eq 1}拼多多{elseif $shop.shop_type eq 2}淘宝{elseif $shop.shop_type eq 3}京东{/if}]---{$shop.shop_name}</option>
+                        <!-- {/eq} -->
+                    <!-- {/foreach} -->
+                </select>
+            </label>
+            <span class="help-block">必选，请选择所属店铺。</span>
+        </div>
+        <div class="hr-line-dashed margin-top-10 margin-bottom-10"></div>
+        <label class="layui-form-item block relative">
+            <span class="color-green font-w7">订单信息</span><span class="color-desc margin-left-5">Order Information</span>
+            <textarea placeholder="请输入订单信息" class="layui-textarea" name="order_str"></textarea>
+            <span class="help-block">格式：订单号+姓名+手机+订单金额+佣金，一行一条信息。</br>如：200101-000000000000001+张三+13888888888+100+3。
+            </span>
+        </label>
+        <div class="hr-line-dashed"></div>
+        <div class="layui-form-item text-center">
+            <button class="layui-btn" type='submit'>保存数据</button>
+            <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+        </div>
+    </div>
+</form>
+{block name='script'}
+<script>
+    require(['jquery.autocompleter'], function () {
+        layui.form.render();
+    });
+</script>
+{/block}

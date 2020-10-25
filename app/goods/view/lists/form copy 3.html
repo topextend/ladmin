@@ -1,0 +1,388 @@
+{extend name="../../admin/view/main"}
+{block name="button"}
+    <a onClick="javascript:window.history.back();return false;" class="layui-btn layui-btn-sm layui-btn-primary">返回</a>
+{/block}
+{block name="content"}
+{include file='lists/formstyle'}
+<form onsubmit="return false" data-auto="true" action="{:request()->url()}" method="post" class='layui-form layui-card' autocomplete="off">
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><b>商品分类</b></label>
+            <div class="layui-input-block">
+                <span class="select_cats">{$select_cats|raw}</span>
+                <a data-open='{:url("category")}' class="BTN_outerWrapper BTN_textPrimary BTN_small BTN_outerWrapperLink"><span>修改分类</span></a>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><b>商品标题</b></label>
+            <div class="layui-input-block">
+                <input name="goods_name" placeholder="请输入商品标题" maxlength="60" required value="{$vo.goods_name|default=''}" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><b>商品属性</b></label>
+            <div class="layui-input-block">
+                <div class="propertys-warmtip">
+                    <div class="tips" style="line-height: 38px;display: inline-block;">请准确填写属性，有利于商品在搜索和推荐中露出，错误填写可能面临商品下架或流量损失!</div>
+                    <span class="important-tips">(注：带<i class="layui-icon">&#xe67a;</i>为重要属性)</span>
+                </div>
+                <div class="goods-propertys">
+                    <div class="propertys">
+                        <div class="property-list">
+                            <div class="mui-form-group" style="display: flex;">
+                                <label class="mui-form-group-label label-required-prev">品牌</label>
+                                <label class="layui-input-block" style="margin-left: 20px;">
+                                    <select name='brand_id' class='layui-select' lay-search>
+                                        <option value="0">请选择</option>
+                                        <!-- {notempty name='goods_brand'} -->
+                                        <!-- {foreach $goods_brand as $brand} -->
+                                            <!-- {eq name='brand.id' value='$vo.brand_id|default=0'} -->
+                                                <option selected value='{$brand.id}'>{$brand.brand_name}</option>
+                                            <!-- {else} -->
+                                                <option value='{$brand.id}'>{$brand.brand_name}</option>
+                                            <!-- {/eq} -->
+                                        <!-- {/foreach} -->
+                                        <!-- {/notempty} -->
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="property-list">
+                            <div class="mui-form-group" style="display: flex;">
+                                <label class="mui-form-group-label label-required-prev">仓库</label>
+                                <label class="layui-input-block" style="margin-left: 20px;">
+                                    <select name='whouse_id' class='layui-select' lay-search>
+                                        <option value="0">请选择</option>
+                                        <!-- {notempty name='goods_whouses'} -->
+                                        <!-- {foreach $goods_whouses as $whouse} -->
+                                            <!-- {eq name='whouse.id' value='$vo.whouse_id|default=0'} -->
+                                                <option selected value='{$whouse.id}'>{$whouse.whouse_name}</option>
+                                            <!-- {else} -->
+                                                <option value='{$whouse.id}'>{$whouse.whouse_name}</option>
+                                            <!-- {/eq} -->
+                                        <!-- {/foreach} -->
+                                        <!-- {/notempty} -->
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="property-list">
+                            <div class="mui-form-group" style="display: flex;">
+                                <label class="mui-form-group-label label-required-prev">商品货号</label>
+                                <label class="layui-input-block" style="margin-left: 20px;">
+                                    <input name="goods_sn" value='{$vo.goods_sn|default=""}' class="layui-input" style="height: 30px;width: 195.6px;">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="property-list">
+                            <div class="mui-form-group" style="display: flex;">
+                                <label class="mui-form-group-label">商品重量</label>
+                                <label class="layui-input-block" style="margin-left: 20px;">
+                                    <input name="goods_weight" value='{$vo.goods_weight|default=""}' class="layui-input" style="height: 30px;width: 165px;">
+                                </label>
+                                <div class="IPT_appendCell IPT_prependAppendCell">kg</div>
+                            </div>
+                        </div>
+                        <!-- {notempty name='goods_attr'} -->
+                        <!-- {foreach $goods_attr as $key => $attr} -->
+                        <!-- {eq name='attr.attr_type' value='1'} -->
+                            <div class="property-list">
+                                <div class="mui-form-group" style="display: flex;">
+                                    <label class="mui-form-group-label">{$attr.attr_name}</label>
+                                    <label class="layui-input-block" style="margin-left: 20px;">
+                                        <select name='attr_value[{$key}]' class='layui-select' lay-search>
+                                            <option value="0">请选择</option>
+                                            <!-- {foreach $attr.attr_values as $value} -->
+                                                <option value='{$value}'>{$value}</option>
+                                            <!-- {/foreach} -->
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+                        <!-- {/eq} -->
+                        <!-- {/foreach} -->
+                        <!-- {/notempty} -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><b>商品图片</b></label>
+            <div class="layui-input-block">
+                <table class="layui-table">
+                    <thead>
+                    <tr>
+                        <th style="width:90px" class="text-center">主图</th>
+                        <th class="text-left">轮播图</th>
+                    </tr>
+                    <tr>
+                        <td class="text-center">
+                            <input name="cover" type="hidden" value="{$vo.cover|default=''}">
+                            <script>$('[name="cover"]').uploadOneImage();</script>
+                        </td>
+                        <td class="text-left">
+                            <input name="slider" type="hidden" value="{$vo.slider|default=''}">
+                            <script>$('[name="slider"]').uploadMultipleImage();</script>
+                        </td>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-xs4">
+                    <label class="layui-form-label"><b>拿货价格</b></label>
+                    <label class="layui-input-block relative block">
+                        <input autofocus required name="stock_price" value="{$vo.stock_price|default=''}" placeholder="请输入拿货价格" class="layui-input">
+                    </label>
+                </div>
+                <div class="layui-col-xs4">
+                    <label class="layui-form-label"><b>本店售价</b></label>
+                    <label class="layui-input-block relative block">
+                        <input autofocus required name="shop_price" value="{$vo.shop_price|default=''}" placeholder="请输入本店售价" class="layui-input">
+                    </label>
+                </div>
+                <div class="layui-col-xs4">
+                    <label class="layui-form-label"><b>市场售价</b></label>
+                    <label class="layui-input-block relative block">
+                        <input autofocus required name="market_price" value='{$vo.market_price|default=""}' placeholder="请输入市场售价" class="layui-input">
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><b>商品规格</b></label>
+            <div class="layui-input-block">
+                <div class="goods-propertys" style="display:inline-block;padding-top:20px;">
+                    <!-- {notempty name='goods_attr'} -->
+                    <!-- {foreach $goods_attr as $key => $attr} -->
+                    <!-- {eq name='attr.attr_type' value='0'} -->
+                    <div class="layui-form-item goods_attr">
+                        <label class="layui-form-label">{$attr.attr_name}</label>
+                        <div class="layui-input-block">
+                            <!-- {foreach $attr.attr_values as $k => $attr} -->
+                            <input type="checkbox" class="attr" id="attr{$key}" name="attr[{$key}][{$k}]" title="{$attr}" lay-filter="forAttr">
+                            <div class="layui-unselect layui-form-checkbox">
+                                <span>{$attr}</span><i class="layui-icon layui-icon-ok"></i>
+                            </div>
+                            <!-- {/foreach} -->
+                        </div>
+                    </div>
+                    <!-- {/eq} -->
+                    <!-- {/foreach} -->
+                    <!-- {/notempty} -->
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><b>价格及库存</b></label>
+            <div class="layui-input-block" id="forAttribute" >
+                <table class="layui-table margin-top-10 attribute">
+                    <thead>
+                        <tr>
+                            <th class="text-center nowrap">价格</th>
+                            <th class="text-center nowrap">库存</th>
+                            <th class="text-center nowrap">SKU编码</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="ng-scope">
+                            <td><input class="layui-input border-0 ng-not-empty"></td>
+                            <td><input class="layui-input border-0 ng-not-empty"></td>
+                            <td><input class="layui-input border-0 ng-not-empty"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><b>商品详情</b></label>
+            <div class="layui-input-block">
+                <textarea name="content">{$vo.goods_desc|default=''|raw}</textarea>                   
+            </div>
+        </div>
+        {notempty name='vo.id'}<input type='hidden' value='{$vo.id}' name='id'>{/notempty}
+        <input type='hidden' value='{:input("cat_id",0)}' name='cat_id'>
+        <div class="layui-form-item text-center">
+            <button class="layui-btn" type='submit'>保存数据</button>
+            <button class="layui-btn layui-btn-danger" type='button' data-open='{:url("index")}'>取消编辑</button>
+        </div>
+    </div>
+</form>
+{/block}
+{block name='script'}
+<script>
+    /*! 表单初始化 */
+    window.form.render();    
+    /*! 加载扩展插件 */
+    require(['ckeditor', 'angular'], function () {
+        window.createEditor('[name="content"]', {height: 500});
+    });
+    
+    form.on('checkbox(forAttr)', function(data){
+        // console.log(data);
+        // console.log(data.elem.id);
+        var len = $('.goods_attr').length;
+        var arr = new Array();
+        var check_len = $('input:checkbox[id="'+data.elem.id+'"]:checked').length;
+        var check_arr = new Array();
+        $('input:checkbox[class="attr"]:checked').each(function () {
+            //获取所有选中的checkbox的name值
+            //$(this)[0].name
+            //获取所有选中的checkbook的title值
+            //$(this)[0].title
+            check_arr.push({
+                name:$(this)[0].name,
+                title:$(this)[0].title,
+                id:$(this)[0].id
+            })
+        })
+        //得到拼接后的数组
+        //将数组中id相同的数组合并成同一个数组
+        var map = {};
+        check_arr.forEach(function (item)
+        {
+            if(map[item.id] == undefined)
+            {
+                var list = [];
+                list.push(item);
+                map[item.id] = list;
+            }
+            else
+            {
+                map[item.id].push(item);
+            }
+        });
+        console.log(map);
+        var new_arr = new Array();
+        for (var i = 0;i<len;i++)
+        {
+            if(map['attr'+i] == undefined)
+            {
+                new_arr[i] = "";
+            }else{
+                new_arr[i]=map['attr'+i];
+            }
+        };
+        console.log(new_arr);
+        for(var i = 0;i<len;i++){
+            for(var j=i;j<len;j++){
+                if(new_arr[i].length > new_arr[j].length){
+                    var temp = new_arr[i];
+                    new_arr[i] = new_arr[j];
+                    new_arr[j] = temp;
+                }
+            }
+        };
+        var sort_arr = [];
+        for(var i=0;i<new_arr.length;i++){
+            if(new_arr[i].length != 0){
+                var v1 = [];
+                for(var j=0;j<new_arr[i].length;j++){
+                    v1.push(new_arr[i][j].name)
+
+                }
+                sort_arr.push(v1)
+            }
+        };
+
+        var arr = doExchange(sort_arr);
+        var htm = '';
+        var htm_tr = '';
+        $('.attribute').remove();
+        layui.use('form', function(){
+            var form = layui.form;
+            form.render();
+        });
+        htm += '<table class="layui-table margin-top-10 attribute"><thead><tr>';
+        for (var i=0;i<len;i++)
+        {
+            if(new_arr[i].length != 0){
+                htm += '<th width="15%" class="text-center nowrap">'+$('input[name="'+new_arr[i][0].name+'"]').parent().prev().text()+'</th>';
+            }
+        }
+        if(arr != undefined){
+            for (var i = 0;i<arr.length;i++){
+                //判断arr[i]类型，是否为string或者object
+                //如果为string，则之间增加
+                if(typeof arr[i] == 'string')
+                {
+                    htm_tr += '<td >'+$('input[name="'+arr[i]+'"]')[0].title+'</td>';
+                    htm_tr += '<td><input class="layui-input border-0 ng-not-empty" name="price['+arr[i]+']"/></td>';
+                    htm_tr += '<td><input class="layui-input border-0 ng-not-empty" name="number['+arr[i]+']"/></td>';
+                    htm_tr += '<td><input class="layui-input border-0 ng-not-empty" name="sku['+arr[i]+']"/></td>';
+                    htm_tr += '</tr>'
+                }
+                else
+                {
+                    for(var j=0;j<arr[i].length;j++)
+                    {
+                        htm_tr += '<td >'+$('input[name="'+arr[i][j]+'"]')[0].title+'</td>';
+                    }
+                    htm_tr += '<td><input class="layui-input border-0 ng-not-empty" name="price['+arr[i]+']"/></td>';
+                    htm_tr += '<td><input class="layui-input border-0 ng-not-empty" name="number['+arr[i]+']"/></td>';
+                    htm_tr += '<td><input class="layui-input border-0 ng-not-empty" name="sku['+arr[i]+']"/></td>';
+                    htm_tr += '</tr>'
+                }
+            }
+            htm += '<th width="15%" class="text-center nowrap">价格</th><th width="15%" class="text-center nowrap">数量</th>'+
+                   '<th class="text-center nowrap">SKU编码</th>';
+            htm += '</tr></thead><tbody>';
+            htm += htm_tr;
+            htm += '</tbody></table>';
+            $("#forAttribute").append(htm);
+            layui.use('form', function(){
+                var form = layui.form;
+                form.render();
+            });
+        }
+        // console.log(new_arr);
+        // alert(data);
+    });
+    function doExchange(arr)
+    {
+        var len = arr.length;
+        // 当数组大于等于2个的时候
+        if(len >= 2)
+        {
+            // 第一个数组的长度
+            var len1 = arr[0].length;
+            // 第二个数组的长度
+            var len2 = arr[1].length;
+            // 2个数组产生的组合数
+            var lenBoth = len1 * len2;
+            //  申明一个新数组
+            var items = new Array(lenBoth);
+            // 申明新数组的索引
+            var index = 0;
+            for(var i=0; i<len1; i++)
+            {
+                for(var j=0; j<len2; j++)
+                {
+                    if(arr[0][i] instanceof Array)
+                    {
+                        items[index] = arr[0][i].concat(arr[1][j]);
+                    }
+                    else
+                    {
+                        items[index] = [arr[0][i]].concat(arr[1][j]);
+                    }
+                    index++;
+                }
+            }
+            var newArr = new Array(len -1);
+            for(var i=2;i<arr.length;i++)
+            {
+                newArr[i-1] = arr[i];
+            }
+            newArr[0] = items;
+            return doExchange(newArr);
+        }
+        else
+        {
+            return arr[0];
+        }
+    }
+</script>
+{/block}

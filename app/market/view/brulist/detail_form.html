@@ -1,0 +1,78 @@
+<form onsubmit="return false" data-auto="true" action="{:request()->url()}" method="post" class='layui-form layui-card' autocomplete="off">
+    <div class="layui-card-body padding-left-40">
+        <div class="layui-form-item">
+            <span class="color-green font-w7 label-required-prev">所属店铺</span>
+            <span class="color-desc margin-left-5">Shop Type</span>
+            <label class="layui-input-block">
+                <select name='shop_id' class='layui-select' lay-search>
+                    <option value="0">请选择店铺</option>
+                    <!-- {foreach $shops as $shop} -->
+                        <!-- {eq name='shop.id' value='$vo.shop_id|default=0'} -->
+                            <option selected value='{$shop.id}'>[{if $shop.shop_type eq 1}拼多多{elseif $shop.shop_type eq 2}淘  宝{elseif $shop.shop_type eq 3}京东{/if}]---{$shop.shop_name}</option>
+                        <!-- {else} -->
+                            <option value='{$shop.id}'>[{if $shop.shop_type eq 1}拼多多{elseif $shop.shop_type eq 2}淘宝{elseif $shop.shop_type eq 3}京东{/if}]---{$shop.shop_name}</option>
+                        <!-- {/eq} -->
+                    <!-- {/foreach} -->
+                </select>
+            </label>
+            <span class="help-block">必选，请选择所属店铺。</span>
+        </div>
+        <div class="hr-line-dashed margin-top-10 margin-bottom-10"></div>
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-xs6">
+                <label class="block relative">
+                    <span class="color-green font-w7">订单编号</span>
+                    <span class="color-desc margin-left-5">Order SN</span>
+                        <input name='order_sn' required placeholder="请输入订单编号" value='{$vo.order_sn|default=""}' class="layui-input">
+                    <span class="help-block">必选，请填写付款成交拍下的订单编号。</span>
+                </label>
+            </div>
+            <div class="layui-col-xs6">
+                <label class="block relative">
+                    <span class="color-green font-w7">订单金额</span>
+                    <span class="color-desc margin-left-5">Orde Price</span>
+                    <input name="order_price" value='{$vo.order_price|default=""}' required placeholder="请输入订单金额" class="layui-input">
+                    <span class="help-block">必选，请填写付款成交的订单金额。</span>
+                </label>
+            </div>
+        </div>
+        <div class="hr-line-dashed margin-top-10 margin-bottom-10"></div>
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-xs4">
+                <label class="relative block">
+                    <span class="color-green font-w7">刷手姓名</span><span class="color-desc margin-left-5">User Name</span>
+                    <input name="user_name" value='{$vo.user_name|default=""}' required placeholder="请输入刷手姓名" class="layui-input">
+                    <span class="color-desc">必选，请填写刷手姓名。</span>
+                </label>
+            </div>
+            <div class="layui-col-xs4">
+                <label class="relative block">
+                    <span class="color-green font-w7">联系手机</span><span class="color-desc margin-left-5">User Phone</span>
+                    <input type="tel" maxlength="11" name="user_phone" value='{$vo.user_phone|default=""}' pattern="^1[3-9][0-9]{9}$" required placeholder="请输入刷手联系手机" class="layui-input">
+                    <span class="color-desc">必选，请填写刷手的联系手机号。</span>
+                </label>
+            </div>
+            <div class="layui-col-xs4">
+                <label class="block relative">
+                    <span class="color-green font-w7">刷手佣金</span>
+                    <span class="color-desc margin-left-5">User BKGE</span>
+                        <input name='user_bkge' required placeholder="请输入佣金金额" value='{$vo.user_bkge|default="3"}' class="layui-input">
+                    <span class="help-block">必选，请填写支付给刷手的佣金金额。</span>
+                </label>
+            </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        {notempty name='vo.id'}<input type='hidden' value='{$vo.id}' name='id'>{/notempty}
+        <div class="layui-form-item text-center">
+            <button class="layui-btn" type='submit'>保存数据</button>
+            <button class="layui-btn layui-btn-danger" type='button' data-confirm="确定要取消编辑吗？" data-close>取消编辑</button>
+        </div>
+    </div>
+</form>
+{block name='script'}
+<script>
+    require(['jquery.autocompleter'], function () {
+        layui.form.render();
+    });
+</script>
+{/block}

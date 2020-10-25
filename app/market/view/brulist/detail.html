@@ -1,0 +1,68 @@
+{extend name="../../admin/view/main"}
+{block name="button"}
+    <!-- {notempty name='$shop_id'} -->
+        <a onClick="javascript:window.history.back();return false;" class="layui-btn layui-btn-sm layui-btn-primary">返回</a>
+    <!-- {/notempty} -->
+    <!-- {if auth("remove")} -->
+        <a data-confirm="确定要删除这些补单记录吗？" data-action='{:url("remove")}' data-rule="id#{key}" data-csrf="{:systoken('remove')}" class='layui-btn layui-btn-sm layui-btn-primary'>批量删除</a>
+    <!-- {/if} -->
+{/block}
+{block name="content"}
+<div class="layui-tab layui-tab-card think-bg-white">
+    <div class="layui-tab-content think-box-shadow table-block">
+        {include file='brulist/detail_search'}
+        <table class="layui-table margin-top-10" lay-skin="line">
+            <!-- {notempty name='list'} -->
+                <thead>
+                    <tr>
+                        <th class='list-table-check-td think-checkbox'>
+                            <input data-auto-none data-check-target='.list-check-box' type='checkbox'>
+                        </th>
+                        <th class='text-center nowrap'>店铺信息</th>
+                        <th class='text-center nowrap'>姓名</th>
+                        <th class='text-center nowrap'>手机</th>
+                        <th class='text-left nowrap'>佣金</th>
+                        <th class='text-center nowrap'>物流费用</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- {foreach $list as $key=>$vo} -->
+                    <tr data-dbclick>
+                        <td class='list-table-check-td think-checkbox'>
+                            <input class="list-check-box" value='{$vo.id}' type='checkbox'>
+                        </td>
+                        <td class='text-center nowrap'>
+                            {if $vo.shop_type eq 1}<span class="color-desc">(拼多多店铺)</span>{elseif $vo.shop_type eq 2}<span class="color-desc">(淘宝店铺)</span>{/if}:<span class="color-blue">{$vo.shop_name|default=''}</span>
+                            <br><span class="color-desc">订单编号：</span><span class="color-blue">{$vo.order_sn|default=''}</span>
+                            <br><span class="color-desc">订单金额：</span><span class="color-blue">{$vo.order_price|default=''}</span>
+                        </td>
+                        <td class='text-center nowrap'>
+                            {$vo.user_name|default=''}
+                        </td>
+                        <td class='text-center nowrap'>
+                            {$vo.user_phone|default=''}
+                        </td>
+                        <td class='text-left nowrap'>
+                            {$vo.user_bkge|default=''}
+                        </td>
+                        <td class='text-center nowrap'>
+                            {$vo.express_price|default=''}
+                        </td>
+                        <td class='text-left nowrap'>
+                            <!--{if auth("edit")}-->
+                                <a class="layui-btn layui-btn-xs" data-title="编辑补单信息" data-modal='{:url("edit")}?id={$vo.id}'>编 辑</a>
+                            <!--{/if}-->
+                            <!-- {if auth("remove")} -->
+                                <a class="layui-btn layui-btn-xs layui-btn-danger" data-confirm="确定要删除该补单信息吗？" data-action='{:url("remove")}' data-value="id#{$vo.id}" data-csrf="{:systoken('remove')}">删 除</a>
+                            <!-- {/if} -->
+                        </td>
+                    </tr>
+                    <!-- {/foreach} -->
+                </tbody>
+            <!-- {/notempty} -->
+        </table>
+        {empty name='list'}<span class="notdata">没有记录哦</span>{else}{$pagehtml|raw|default=''}{/empty}
+    </div>
+</div>
+{/block}

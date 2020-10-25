@@ -1,0 +1,34 @@
+{extend name="../../admin/view/main"}
+{block name="button"}
+    <a onClick="javascript:window.history.back();return false;" class="layui-btn layui-btn-sm layui-btn-primary">返回</a>
+{/block}
+{block name="content"}
+<form action="" class="layui-form layui-form-pane" style="padding: 40px;">
+    <div id="sku" data-item="" data-data=""></div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">结果</label>
+        <div class="layui-input-block" id="data-html" style="background: #fff;padding: 20px;"></div>
+    </div>
+    <div class="layui-form-item">        
+        <div class="layui-input-block">
+            <a class="layui-btn" id="_get">获取数据</a>
+        </div>
+    </div>
+</form>
+{/block}
+{block name='script'}
+<script src="__ROOT__/static/sku.js"></script>
+<script>
+    layui.use(['sku','jquery'],function(){
+        var $ = layui.jquery,sku = layui.sku;
+        var item = [{"id":1,"name":"颜色","sub":[{"id":1,"name":"黑"},{"id":2,"name":"白"},{"id":3,"name":"蓝"}]},{"id":2,"name":"尺寸","sub":[{"id":4,"name":"S"},{"id":5,"name":"M"},{"id":6,"name":"L"}]}];
+        var data = [{"ids":[{"1":"1"},{"2":"4"}],"price":0,"stock":0,"sku":0}];
+        var SKU = sku.init({ id:'sku', item: item, data:data });
+        $('#_get').click(function(){
+            var data  = SKU.getData();
+            var data2 = SKU.getItem();
+            $('#data-html').html(JSON.stringify(data)+'<br>'+JSON.stringify(data2));
+        });
+    });
+</script>
+{/block}

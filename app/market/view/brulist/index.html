@@ -1,0 +1,75 @@
+{extend name="../../admin/view/main"}
+{block name="button"}
+<!--{if auth("add")}-->
+<button data-modal='{:url("add")}' data-title="添加数据" class='layui-btn layui-btn-sm layui-btn-primary'>添加数据</button>
+<!--{/if}-->
+{/block}
+{block name="content"}
+<div class="layui-tab layui-tab-card think-bg-white">
+    <div class="layui-tab-content think-box-shadow table-block">
+        {include file='brulist/index_search'}
+        <table class="layui-table margin-top-10" lay-skin="line">
+            <!-- {notempty name='list'} -->
+                <thead>
+                    <tr>
+                        <th class='text-left nowrap'>日期</th>
+                        <th class='text-left nowrap'>店铺名称</th>
+                        <th class='text-left nowrap'>单数</th>
+                        <th class='text-left nowrap'>订单信息</th>
+                        <th class='text-left nowrap'>合计</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- {foreach $list as $key=>$vo} -->
+                    <tr data-dbclick>
+                        <td class='text-left nowrap'>
+                            {$vo.create_at|date='Y年m月d日'}</span>
+                        </td>
+                        <td class='text-left nowrap'>
+                            {$vo.shop_name|default=''}
+                        </td>
+                        <td class='text-left nowrap'>
+                            {$vo.conuts|default=''}
+                        </td>
+                        <td class='nowrap'>
+                            {if $vo.shop_type eq 1}
+                            <span class="layui-badge layui-badge-middle layui-bg-orange">拼多多</span>
+                            {elseif $vo.shop_type eq 2}
+                            <span class="layui-badge layui-badge-middle layui-bg-red">淘宝</span>
+                            {elseif $vo.shop_type eq 3}
+                            <span class="layui-badge layui-badge-middle layui-bg-blue">京东</span>
+                            {/if}
+                            <div class="inline-block text-middle">
+                                订单总额：<b class="color-blue">{$vo.order_price|default=''}</b> 元<br>
+                                佣金总额：<b class="color-blue">{$vo.user_bkge|default=''}</b> 元<br>
+                                快递费用：<b class="color-blue">{$vo.express_price |default=''}</b> 元
+                            </div>
+                        </td>
+                        <td class='text-left nowrap'>
+                            <span class="layui-badge layui-badge-middle layui-bg-red">统计</span>
+                            <div class="inline-block text-middle">
+                                向客户收款：<b class="color-blue">{$vo.total|default=''}</b> 元<br>
+                                总利润收益：<b class="color-blue">{$vo.profit|default=''}</b> 元<br>
+                                向主持付款：<b class="color-blue">{$vo.capital|default=''}</b> 元<br>
+                                向快递付款：<b class="color-blue">{$vo.fee|default=''}</b> 元
+                            </div>
+                        </td>
+                        <td class='text-left nowrap'>
+                            <!--{if auth("detail")}-->
+                                <a class="layui-btn layui-btn-normal layui-btn-xs" data-title="明细" data-open='{:url("detail")}?shop_id={$vo.shop_id}&create_at={$vo.create_at|date="Y-m-d"}'>明细</a>
+                            <!--{/if}-->
+                            <!--{if auth("export")}-->
+                                <a class="layui-btn layui-btn-xs" data-title="导出" href='{:url("export")}?shop_name={$vo.shop_name}&create_at={$vo.create_at|date="Y-m-d"}'>导出</a>
+                            <!--{/if}-->
+                        </td>
+                    </tr>
+                    <!-- {/foreach} -->
+                </tbody>
+            <!-- {/notempty} -->
+        </table>
+        {empty name='list'}<span class="notdata">没有记录哦</span>{else}{$pagehtml|raw|default=''}{/empty}
+    </div>
+    <script>form.render()</script>
+</div>
+{/block}

@@ -1,0 +1,20 @@
+<fieldset>
+    <legend>条件搜索</legend>
+    <form class="layui-form layui-form-pane form-search" action="{:url()}?shop_id={$shop_id}" onsubmit="return false" method="get" autocomplete="off">
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label">刷手姓名</label>
+            <div class="layui-input-inline">
+                <input name="user_name" value="{:input('get.user_name')}" placeholder="请输入刷手姓名" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label">刷手手机</label>
+            <div class="layui-input-inline">
+                <input name="user_phone" value="{:input('get.user_phone')}" placeholder="请输入刷手手机" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-inline">
+            <button class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+        </div>
+    </form>
+</fieldset>

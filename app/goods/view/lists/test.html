@@ -1,0 +1,231 @@
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function() {
+    var form = layui.form
+        , layer = layui.layer
+        , layedit = layui.layedit
+        , laydate = layui.laydate;
+
+    form.on('select(forAttribute)',function (data) {
+
+        $('#forAttributeTable').remove()
+        $('.attributeTable').remove()
+        layui.use('form', function(){
+            var form = layui.form;
+            form.render();
+        });
+        $.ajax({
+            type:"post",
+            url:"admin/attrconfig/get_attribute",
+            data:{
+                'cate_id':data.value
+            },
+            dataType:"json",
+            success:function (msg) {
+                var htm = '';
+                var length = msg.data.length;
+                htm += '<div id="forAttributeTable">';
+                for (var i = 0;i<length;i++){
+                    htm += '<div class="add"><div class="layui-form-item">' +
+                        '<div class="layui-input-block" style="height: 10px;">' +
+                        '<p>'+msg.data[i].name+'</p>' +
+                        '<div>';
+                    for(var j = 0;j<msg.data[i]['attrConfig'].length;j++){
+                        htm += '<input type="checkbox" class="attrconfig" id="attrconfig'+i+'" name="attrconfig['+msg.data[i]['attrConfig'][j]['id']+']" lay-skin="primary" title="'+msg.data[i]['attrConfig'][j]['name']+'" lay-filter="forTable">';
+                    }
+
+                    htm += '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="layui-form-item">' +
+                        '<div class="layui-input-block" >' +
+                        '<hr class="layui-bg-gray">' +
+                        '</div>' +
+                        '</div></div>';
+                }
+                htm += '</div>';
+                $("#add_attribute").append(htm);
+                layui.use('form', function(){
+                    var form = layui.form;
+                    form.render();
+                });
+            }
+        })
+    })
+
+    form.on('checkbox(forTable)',function (data) {
+        //获取复选框选中数据
+        //console.log($('input:checkbox[id="'+data.elem.id+'"]:checked').val());
+        //获取到复选框选中值的长度
+        //console.log($('input:checkbox[id="'+data.elem.id+'"]:checked').length);
+        //获取该分类下有多少个组
+        //console.log($('.add').length);
+        /**
+         * 当点击复选框时，遍历各组之间被选择的个数的多少，将个数最少的那组，放置于数组最前。
+         */
+        var len = $('.add').length;
+        var arr = new Array();
+//console.log(data.elem.name)
+//console.log(data.elem.title)
+
+        //当点击时，获取所有选中的checkbox的值
+        var check_len = $('input:checkbox[id="'+data.elem.id+'"]:checked').length;
+        var check_arr = new Array();
+        $('input:checkbox[class="attrconfig"]:checked').each(function () {
+            //获取所有选中的checkbox的name值
+            //$(this)[0].name
+            //获取所有选中的checkbook的title值
+            //$(this)[0].title
+            check_arr.push({
+                name:$(this)[0].name,
+                title:$(this)[0].title,
+                id:$(this)[0].id
+            })
+        })
+
+        //得到拼接后的数组
+        //将数组中id相同的数组合并成同一个数组
+        var map = {};
+        check_arr.forEach(function (item) {
+            if(map[item.id] == undefined){
+                var list = [];
+                list.push(item);
+                map[item.id] = list;
+            }else{
+                map[item.id].push(item);
+            }
+        })
+
+        var new_arr = new Array();
+        for (var i = 0;i<len;i++){
+            if(map['attrconfig'+i] == undefined){
+                new_arr[i] = "";
+            }else{
+                new_arr[i]=map['attrconfig'+i];
+            }
+
+        }
+
+        for(var i = 0;i<len;i++){
+            for(var j=i;j<len;j++){
+                //console.log(new_arr[i].length)
+                if(new_arr[i].length > new_arr[j].length){
+                    var temp = new_arr[i];
+                    new_arr[i] = new_arr[j];
+                    new_arr[j] = temp;
+                }
+
+            }
+        }
+        //console.log(new_arr)
+        var sort_arr = [];
+        for(var i=0;i<new_arr.length;i++){
+            if(new_arr[i].length != 0){
+                var v1 = [];
+                for(var j=0;j<new_arr[i].length;j++){
+                    v1.push(new_arr[i][j].name)
+
+                }
+                sort_arr.push(v1)
+            }
+        }
+
+        var arr = doExchange(sort_arr);
+
+        var htm = '';
+        var htm_tr = '';
+        $('.attributeTable').remove()
+        layui.use('form', function(){
+            var form = layui.form;
+            form.render();
+        });
+        htm += '<div class="attributeTable"><div class="layui-form-item">' +
+            '<div class="layui-input-block">' +
+            '<table class="layui-table">' +
+            '<thead>' +
+            '<tr>';
+
+        for (var i=0;i<len;i++){
+
+            if(new_arr[i].length != 0){
+                htm += '<th>'+$('input[name="'+new_arr[i][0].name+'"]').parent().prev().text()+'</th>';
+            }
+        }
+
+        if(arr != undefined){
+            for (var i = 0;i<arr.length;i++){
+                //判断arr[i]类型，是否为string或者object
+                //如果为string，则之间增加
+                if(typeof arr[i] == 'string'){
+                    htm_tr += '<td >'+$('input[name="'+arr[i]+'"]')[0].title+'</td>';
+                    htm_tr += '<td><input style="width: 100%;height: 100%;border: 0px;background-color: transparent;" name="price['+arr[i]+']"/></td>';
+                    htm_tr += '<td><input style="width: 100%;height: 100%;border: 0px;background-color: transparent;" name="number['+arr[i]+']"/></td>';
+                    htm_tr += '</tr>'
+                }else{
+                    for(var j=0;j<arr[i].length;j++){
+                        htm_tr += '<td >'+$('input[name="'+arr[i][j]+'"]')[0].title+'</td>';
+                    }
+                    htm_tr += '<td><input style="width: 100%;height: 100%;border: 0px;background-color: transparent;" name="price['+arr[i]+']"/></td>';
+                    htm_tr += '<td><input style="width: 100%;height: 100%;border: 0px;background-color: transparent;" name="number['+arr[i]+']"/></td>';
+                    htm_tr += '</tr>'
+                }
+
+            }
+            htm += '<th>价格</th>' +
+                '<th>数量</th>';
+
+            htm += '</tr>' +
+                '</thead>' +
+                '<tbody>';
+
+            htm += htm_tr;
+
+            htm += '</tbody>' +
+                '</table>' +
+                '</div>' +
+                '</div></div>';
+            $("#forAttributeTable").append(htm);
+            layui.use('form', function(){
+                var form = layui.form;
+                form.render();
+            });
+        }
+    })
+
+});
+
+
+function doExchange(arr){
+    var len = arr.length;
+    // 当数组大于等于2个的时候
+    if(len >= 2){
+        // 第一个数组的长度
+        var len1 = arr[0].length;
+        // 第二个数组的长度
+        var len2 = arr[1].length;
+        // 2个数组产生的组合数
+        var lenBoth = len1 * len2;
+        //  申明一个新数组
+        var items = new Array(lenBoth);
+        // 申明新数组的索引
+        var index = 0;
+        for(var i=0; i<len1; i++){
+            for(var j=0; j<len2; j++){
+                if(arr[0][i] instanceof Array){
+                    items[index] = arr[0][i].concat(arr[1][j]);
+                }else{
+                    items[index] = [arr[0][i]].concat(arr[1][j]);
+                }
+                index++;
+            }
+        }
+        var newArr = new Array(len -1);
+        for(var i=2;i<arr.length;i++){
+            newArr[i-1] = arr[i];
+        }
+        newArr[0] = items;
+        return doExchange(newArr);
+    }else{
+        return arr[0];
+    }
+}
+</script>
