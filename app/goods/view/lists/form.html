@@ -16,7 +16,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label"><b>商品标题</b></label>
             <div class="layui-input-block">
-                <input name="goods_name" placeholder="请输入商品标题" maxlength="60" required value="{$vo.goods_name|default=''}" class="layui-input">
+                <input type="text" name="goods_name" onkeyup="inputTest(this.value)" placeholder="请输入商品标题" maxlength="60" required value="{$vo.goods_name|default=''}" class="layui-input">
+                <span id="wordLength" class="layui-anim layui-anim-check"></span>
             </div>
         </div>
         <div class="layui-form-item">
@@ -173,7 +174,7 @@
                                                         <li class="sku-item">
                                                             <input type="checkbox" id="{$k}" value="{$k}" name="sku_{$k}" class="j_checkbox sku_id" lay-skin="primary" autocomplete="off">
                                                             <label title="{$attr}" class="labelname" id='labelname_{$k}' for="sku_{$k}">{$attr}</label>
-                                                            <input class="editbox text" type="text" value="{$attr|stripColorTags}" maxlength="15" autocomplete="off" onkeyup="remark_name_keyup($(this))">
+                                                            <input class="editbox text" type="text" value="{$attr}" maxlength="15" autocomplete="off" onkeyup="remark_name_keyup($(this))">
                                                         </li>
                                                         <!-- {/foreach} -->
                                                     </ul>
@@ -269,5 +270,28 @@
     require(['ckeditor', 'angular'], function () {
         window.createEditor('[name="content"]', {height: 500});
     });
+    function getStrLength(str){
+        //传递一个字符串过来
+        var mylen=0;
+        //遍历这个字符串
+        for(var i=0;i<str.length;i++){
+            //如果字符串的第i个字符的Unicode码在0-128之间就是英文字符，应该算一个长度
+            if(str.charCodeAt(i)>0 && str.charCodeAt(i)<128){
+                mylen++;
+            }else{
+                //否则算两个长度
+                mylen+=2;
+            }
+        }
+        return mylen;
+    }
+    //输入当字符数变更就触发这个函数
+    function inputTest(value){
+        document.getElementById("wordLength").innerHTML=parseInt(getStrLength(value)/1)+"\/60";
+        //如果超过10个字，20个字符
+        if(parseInt(getStrLength(value))<=60){
+            document.getElementById("wordLength").style.display="block";
+        } 
+    }
 </script>
 {/block}

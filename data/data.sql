@@ -18,28 +18,6 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for la_hooks
--- ----------------------------
-DROP TABLE IF EXISTS `la_hooks`;
-CREATE TABLE `la_hooks`  (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `name` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '钩子名称',
-  `mark` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '钩子标识',
-  `list` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '钩子挂载的插件 \'，\'分割',
-  `description` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '描述',
-  `status` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '钩子状态：0=停用；1=启用；',
-  `is_install` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '安装状态：0=未安装；1=已安装',
-  `is_config` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '配置状态：0=无配置；1=有配置',
-  `create_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建时间',
-  `update_at` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '钩子列表' ROW_FORMAT = Compact;
-
--- ----------------------------
--- Records of la_hooks
--- ----------------------------
-
--- ----------------------------
 -- Table structure for la_system_auth
 -- ----------------------------
 DROP TABLE IF EXISTS `la_system_auth`;

@@ -65,13 +65,13 @@ class Config extends Controller
             $this->fetch();
         } else {
             if ($xpath = $this->request->post('xpath')) {
-                if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]+$/', $xpath)) {
+                if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $xpath)) {
                     $this->error('后台入口名称需要是由英文字母开头！');
                 }
                 if ($xpath !== 'admin' && file_exists($this->app->getBasePath() . $xpath)) {
                     $this->error("后台入口名称{$xpath}已经存在应用！");
                 }
-                SystemService::instance()->setRuntime([$xpath => 'admin']);
+                SystemService::instance()->setRuntime(null, [$xpath => 'admin']);
             }
             foreach ($this->request->post() as $name => $value) sysconf($name, $value);
             $this->success('修改系统参数成功！', sysuri("{$xpath}/index/index") . '#' . url("{$xpath}/config/index"));
@@ -90,13 +90,9 @@ class Config extends Controller
         $this->_applyFormToken();
         if ($this->request->isGet()) {
             $this->type = input('type', 'local');
-            if ($this->type === 'alioss') {
-                $this->points = AliossStorage::region();
-            } elseif ($this->type === 'txcos') {
-                $this->points = TxcosStorage::region();
-            } elseif ($this->type === 'qiniu') {
-                $this->points = QiniuStorage::region();
-            }
+            if ($this->type === 'alioss') $this->points = AliossStorage::region();
+            elseif ($this->type === 'qiniu') $this->points = QiniuStorage::region();
+            elseif ($this->type === 'txcos') $this->points = TxcosStorage::region();
             $this->fetch("storage-{$this->type}");
         } else {
             $post = $this->request->post();
